@@ -1,0 +1,95 @@
+{
+  "theme": "dark",
+  "archetype": "7 (Electric & Neon) & Retro-Futurism Terminal Hybrid",
+  "emotional_tone": "Competent, elite, precise, and highly technical with an editorial edge.",
+  "colors": {
+    "background": "#030303",
+    "surface": "#0A0A0A",
+    "surface_glass": "rgba(10, 10, 10, 0.7)",
+    "primary": "#00E5FF",
+    "secondary": "#00FF41",
+    "text_primary": "#FFFFFF",
+    "text_secondary": "#A1A1AA",
+    "border": "#1A1A1A",
+    "border_hover": "rgba(0, 229, 255, 0.5)"
+  },
+  "typography": {
+    "font_heading": "Outfit, sans-serif",
+    "font_body": "IBM Plex Sans, sans-serif",
+    "font_mono": "JetBrains Mono, monospace",
+    "heading_scale": {
+      "h1": "text-4xl sm:text-5xl lg:text-6xl tracking-tighter font-bold",
+      "h2": "text-2xl sm:text-3xl lg:text-4xl tracking-tight font-semibold",
+      "h3": "text-xl sm:text-2xl font-semibold",
+      "h4": "text-lg sm:text-xl font-medium"
+    },
+    "body_scale": {
+      "base": "text-base leading-relaxed",
+      "small": "text-sm leading-relaxed",
+      "overline": "text-xs uppercase tracking-[0.2em] font-mono text-primary"
+    }
+  },
+  "layout_and_spacing": {
+    "spacing_scale": "Generous spacing. Use p-8, p-12, p-16 for sections. Min-h-screen for hero.",
+    "grid_system": "Bento Grid (Tetris Mode) for Projects and About Stats. Gap-8 to gap-12. Asymmetry preferred.",
+    "container_max_width": "max-w-7xl mx-auto px-4 sm:px-6 lg:px-8",
+    "alignment": "Left-aligned mostly. Terminal aesthetic requires left-aligned text mimicking CLI output."
+  },
+  "surface_strategies": {
+    "hero_background": "Retro-Futurism: Grid borders in background using CSS linear-gradients to create a subtle #1A1A1A mesh on #030303.",
+    "cards": "Grid Borders and Tracing Beam. Flat #0A0A0A background with 1px #1A1A1A border. Hover states introduce #00E5FF glow or border tint.",
+    "navbar": "Glassmorphism: bg-black/60 backdrop-blur-xl border-b border-white/10.",
+    "admin_dashboard": "Control Room Grid. Sharp edges. 1px solid borders. Maximum density, pure functional (Swiss High Contrast)."
+  },
+  "motion_and_interactions": {
+    "hover_states": "Buttons and links: text color turns to #00E5FF, slight translate-y. Projects cards: border color changes to cyan-500/50, image scales up slightly.",
+    "scroll_animations": "Staggered fade-up for grid items. Use framer-motion.",
+    "micro_interactions": "Custom cursor (cyan dot). Typewriter effect for terminal text in Hero."
+  },
+  "components": {
+    "buttons": "Flat, sharp edges. Primary CTA: bg-primary text-black font-mono font-bold hover:bg-white transition-colors. Secondary: bg-transparent border border-border text-text_primary hover:border-primary hover:text-primary.",
+    "inputs": "Shadcn based. bg-transparent border-b border-border focus:border-primary focus:ring-0 rounded-none text-white.",
+    "tags": "Small, font-mono, border border-border text-text_secondary px-2 py-1 uppercase text-xs tracking-wider."
+  },
+  "media": {
+    "image_urls": {
+      "hero_bg": {
+        "url": "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&q=80",
+        "description": "Abstract cybersecurity dark tech background",
+        "category": "background"
+      },
+      "project_1": {
+        "url": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&q=80",
+        "description": "Cloud nodes and earth network",
+        "category": "project"
+      },
+      "project_2": {
+        "url": "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&q=80",
+        "description": "Data center server racks in dark lighting",
+        "category": "project"
+      },
+      "project_3": {
+        "url": "https://images.pexels.com/photos/16018144/pexels-photo-16018144.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+        "description": "Silhouette of a programmer coding in dark room",
+        "category": "project"
+      },
+      "project_4": {
+        "url": "https://images.pexels.com/photos/34803969/pexels-photo-34803969.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+        "description": "Close-up of laptop displaying code in dimly lit room",
+        "category": "project"
+      }
+    }
+  },
+  "instructions_to_main_agent": [
+    "Use JavaScript (.js/.jsx) exclusively; do not use TypeScript.",
+    "All interactive and key informational elements MUST include a 'data-testid' attribute (e.g., data-testid='contact-submit-btn').",
+    "Install and configure 'lucide-react' for icons.",
+    "Install 'framer-motion' for animations, specifically typewriter effects in the hero terminal.",
+    "Do not use generic Inter font. Import Outfit (headings), IBM Plex Sans (body), and JetBrains Mono (monospace).",
+    "Ensure the design embraces the terminal/CLI metaphor where appropriate, but maintains a sophisticated editorial look. Avoid cheesy aesthetics.",
+    "Implement a custom cursor, smooth scrolling (Lenis), and micro-interactions on hover.",
+    "Admin dashboard must use 'Control Room' dense UI, without rounded corners.",
+    "The Projects section should utilize a Tetris Bento Grid.",
+    "NEVER use placeholder text for images; strictly rely on the provided media URLs."
+  ]
+}

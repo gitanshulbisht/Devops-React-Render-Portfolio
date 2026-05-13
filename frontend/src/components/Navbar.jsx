@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Menu, X, Terminal } from "lucide-react";
 
 const sections = [
@@ -16,6 +16,7 @@ export default function Navbar() {
     const [scrolled, setScrolled] = useState(false);
     const [open, setOpen] = useState(false);
     const location = useLocation();
+    const navigate = useNavigate();
     const onHome = location.pathname === "/";
 
     useEffect(() => {
@@ -24,6 +25,21 @@ export default function Navbar() {
         window.addEventListener("scroll", onScroll);
         return () => window.removeEventListener("scroll", onScroll);
     }, []);
+
+    const scrollToSection = (id) => {
+        setOpen(false);
+        if (!onHome) {
+            navigate("/");
+            // wait for Home to mount before scrolling
+            setTimeout(() => {
+                const el = document.getElementById(id);
+                if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+            }, 100);
+            return;
+        }
+        const el = document.getElementById(id);
+        if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+    };
 
     return (
         <nav
@@ -49,17 +65,16 @@ export default function Navbar() {
                     </Link>
 
                     <div className="hidden lg:flex items-center gap-1">
-                        {onHome &&
-                            sections.map((s) => (
-                                <a
-                                    key={s.id}
-                                    href={`#${s.id}`}
-                                    data-testid={`nav-link-${s.id}`}
-                                    className="px-3 py-1.5 text-sm text-zinc-400 hover:text-cyan-500 transition-colors font-mono"
-                                >
-                                    {s.label}
-                                </a>
-                            ))}
+                        {sections.map((s) => (
+                            <button
+                                key={s.id}
+                                onClick={() => scrollToSection(s.id)}
+                                data-testid={`nav-link-${s.id}`}
+                                className="px-3 py-1.5 text-sm text-zinc-400 hover:text-cyan-500 transition-colors font-mono"
+                            >
+                                {s.label}
+                            </button>
+                        ))}
                         <Link
                             to="/blog"
                             data-testid="nav-blog"
@@ -95,17 +110,15 @@ export default function Navbar() {
                     className="lg:hidden bg-black/95 border-t border-white/[0.06] backdrop-blur-xl"
                 >
                     <div className="px-4 py-4 flex flex-col gap-1">
-                        {onHome &&
-                            sections.map((s) => (
-                                <a
-                                    key={s.id}
-                                    href={`#${s.id}`}
-                                    onClick={() => setOpen(false)}
-                                    className="px-3 py-2 text-zinc-300 hover:text-cyan-500 font-mono text-sm"
-                                >
-                                    {s.label}
-                                </a>
-                            ))}
+                        {sections.map((s) => (
+                            <button
+                                key={s.id}
+                                onClick={() => scrollToSection(s.id)}
+                                className="text-left px-3 py-2 text-zinc-300 hover:text-cyan-500 font-mono text-sm"
+                            >
+                                {s.label}
+                            </button>
+                        ))}
                         <Link
                             to="/blog"
                             onClick={() => setOpen(false)}

@@ -22,6 +22,11 @@ function Typewriter({ text, speed = 22, onDone }) {
     return <span>{text.slice(0, i)}</span>;
 }
 
+const scrollTo = (id) => {
+    const el = document.getElementById(id);
+    if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+};
+
 export default function Hero({ profile }) {
     const [step, setStep] = useState(0);
 
@@ -99,8 +104,8 @@ export default function Hero({ profile }) {
                             transition={{ duration: 0.6, delay: 0.5 }}
                             className="mt-10 flex flex-wrap items-center gap-4"
                         >
-                            <a
-                                href="#contact"
+                            <button
+                                onClick={() => scrollTo("contact")}
                                 data-testid="hero-cta-contact"
                                 className="group inline-flex items-center gap-2 px-6 py-3 bg-cyan-500 text-black font-mono text-sm font-bold uppercase tracking-wider hover:bg-white transition-colors"
                             >
@@ -109,14 +114,14 @@ export default function Hero({ profile }) {
                                     size={16}
                                     className="group-hover:translate-x-1 transition-transform"
                                 />
-                            </a>
-                            <a
-                                href="#projects"
+                            </button>
+                            <button
+                                onClick={() => scrollTo("projects")}
                                 data-testid="hero-cta-work"
                                 className="inline-flex items-center gap-2 px-6 py-3 border border-white/15 text-white font-mono text-sm uppercase tracking-wider hover:border-cyan-500 hover:text-cyan-500 transition-colors"
                             >
                                 View work
-                            </a>
+                            </button>
                         </motion.div>
                     </div>
 

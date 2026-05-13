@@ -83,7 +83,7 @@ export default function Navbar() {
                             Blog
                         </Link>
                         <a
-                            href="/Anshul_Bisht_Resume.docx"
+                            href={`${process.env.PUBLIC_URL}/Anshul_Bisht_Resume.docx`}
                             download
                             data-testid="nav-resume-download"
                             className="ml-4 inline-flex items-center gap-2 px-4 py-2 bg-cyan-500 text-black font-mono text-xs font-bold uppercase tracking-wider hover:bg-white transition-colors"
@@ -127,7 +127,7 @@ export default function Navbar() {
                             Blog
                         </Link>
                         <a
-                            href="/Anshul_Bisht_Resume.docx"
+                            href={`${process.env.PUBLIC_URL}/Anshul_Bisht_Resume.docx`}
                             download
                             className="mt-2 inline-flex items-center justify-center gap-2 px-4 py-2 bg-cyan-500 text-black font-mono text-xs font-bold uppercase tracking-wider"
                         >

@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
+import { HashRouter, Routes, Route, useLocation } from "react-router-dom";
 import { Toaster } from "sonner";
 import { AuthProvider } from "./contexts/AuthContext";
 import Navbar from "./components/Navbar";
@@ -25,7 +25,7 @@ function Shell({ children }) {
 export default function App() {
     return (
         <AuthProvider>
-            <BrowserRouter>
+            <HashRouter>
                 <CustomCursor />
                 <Toaster
                     position="bottom-right"
@@ -53,7 +53,7 @@ export default function App() {
                         />
                     </Routes>
                 </Shell>
-            </BrowserRouter>
+            </HashRouter>
         </AuthProvider>
     );
 }

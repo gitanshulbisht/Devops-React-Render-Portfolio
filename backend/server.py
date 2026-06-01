@@ -315,9 +315,48 @@ async def root():
 
 
 # -------------------- Routes: Portfolio --------------------
+PORTFOLIO_SECTIONS = {
+    "profile", "stats", "skills", "experience",
+    "projects", "certifications", "education", "social",
+}
+
+
+async def get_portfolio_doc():
+    doc = await db.portfolio_content.find_one(
+        {"key": "main"}, {"_id": 0, "key": 0}
+    )
+    if doc:
+        return doc
+    return PORTFOLIO_DATA
+
+
 @api_router.get("/portfolio")
 async def get_portfolio():
-    return PORTFOLIO_DATA
+    return await get_portfolio_doc()
+
+
+@api_router.get("/admin/portfolio")
+async def admin_get_portfolio(user: dict = Depends(get_current_user)):
+    return await get_portfolio_doc()
+
+
+@api_router.put("/admin/portfolio/{section}")
+async def admin_update_portfolio_section(
+    section: str,
+    payload: dict,
+    user: dict = Depends(get_current_user),
+):
+    if section not in PORTFOLIO_SECTIONS:
+        raise HTTPException(status_code=400, detail="Invalid section")
+    if "data" not in payload:
+        raise HTTPException(status_code=400, detail="Missing 'data' in body")
+    await db.portfolio_content.update_one(
+        {"key": "main"},
+        {"$set": {section: payload["data"]}},
+        upsert=True,
+    )
+    doc = await get_portfolio_doc()
+    return {"ok": True, "section": section, "value": doc.get(section)}
 
 
 # -------------------- Routes: Auth --------------------
@@ -588,15 +627,25 @@ async def seed_demo_blog_posts():
     logger.info(f"Seeded {len(posts)} demo blog posts")
 
 
+async def seed_portfolio_content():
+    existing = await db.portfolio_content.find_one({"key": "main"})
+    if existing is None:
+        doc = {"key": "main", **PORTFOLIO_DATA}
+        await db.portfolio_content.insert_one(doc)
+        logger.info("Seeded portfolio_content with hardcoded defaults")
+
+
 @app.on_event("startup")
 async def on_startup():
     # Indexes
     await db.users.create_index("email", unique=True)
     await db.login_attempts.create_index("identifier", unique=True)
     await db.blog_posts.create_index("slug", unique=True)
+    await db.portfolio_content.create_index("key", unique=True)
     # Seeds
     await seed_admin()
     await seed_demo_blog_posts()
+    await seed_portfolio_content()
 
 
 @app.on_event("shutdown")

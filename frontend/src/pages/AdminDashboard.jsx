@@ -3,6 +3,7 @@ import { Navigate, Link } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 import { api, formatApiErrorDetail } from "../lib/api";
 import { toast } from "sonner";
+import PortfolioEditor from "../components/admin/PortfolioEditor";
 import {
     LogOut,
     Mail,
@@ -125,6 +126,17 @@ export default function AdminDashboard() {
                     >
                         Blog Posts ({posts.length})
                     </button>
+                    <button
+                        data-testid="admin-tab-content"
+                        onClick={() => setTab("content")}
+                        className={`px-5 py-3 font-mono text-xs uppercase tracking-widest border-b-2 transition-colors ${
+                            tab === "content"
+                                ? "border-cyan-500 text-cyan-500"
+                                : "border-transparent text-zinc-500 hover:text-zinc-300"
+                        }`}
+                    >
+                        Site Content
+                    </button>
                 </div>
 
                 {tab === "contacts" && (
@@ -149,6 +161,8 @@ export default function AdminDashboard() {
                         onDelete={deletePost}
                     />
                 )}
+
+                {tab === "content" && <PortfolioEditor />}
             </main>
 
             {showEditor && (

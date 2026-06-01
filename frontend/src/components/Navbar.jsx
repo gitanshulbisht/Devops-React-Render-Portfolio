@@ -30,11 +30,17 @@ export default function Navbar() {
         setOpen(false);
         if (!onHome) {
             navigate("/");
-            // wait for Home to mount before scrolling
-            setTimeout(() => {
+            // Home re-mounts and fetches data — wait for the section to appear
+            const start = Date.now();
+            const tryScroll = () => {
                 const el = document.getElementById(id);
-                if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
-            }, 100);
+                if (el) {
+                    el.scrollIntoView({ behavior: "smooth", block: "start" });
+                } else if (Date.now() - start < 5000) {
+                    setTimeout(tryScroll, 80);
+                }
+            };
+            setTimeout(tryScroll, 80);
             return;
         }
         const el = document.getElementById(id);

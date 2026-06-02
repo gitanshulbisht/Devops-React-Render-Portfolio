@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { api, formatApiErrorDetail } from "../lib/api";
+import { api, formatApiErrorDetail } from "../../lib/api";
 import { toast } from "sonner";
 import { Plus, Trash2, Save, ChevronDown, ChevronUp } from "lucide-react";
 

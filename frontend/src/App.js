@@ -1,4 +1,4 @@
-import { HashRouter, Routes, Route, useLocation } from "react-router-dom";
+import { HashRouter, Routes, Route, useLocation, Navigate } from "react-router-dom";
 import { Toaster } from "sonner";
 import { AuthProvider } from "./contexts/AuthContext";
 import Navbar from "./components/Navbar";
@@ -12,7 +12,7 @@ import AdminDashboard from "./pages/AdminDashboard";
 
 function Shell({ children }) {
     const location = useLocation();
-    const isAdmin = location.pathname.startsWith("/admin");
+    const isAdmin = location.pathname.startsWith("/admin") || location.pathname.startsWith("/portfolio/admin");
     return (
         <>
             {!isAdmin && <Navbar />}
@@ -20,6 +20,11 @@ function Shell({ children }) {
             {!isAdmin && <Footer profile={{ name: "Anshul Bisht" }} />}
         </>
     );
+}
+
+function PortfolioRedirect() {
+    const location = useLocation();
+    return <Navigate to={location.pathname.replace(/^\/portfolio/, "") || "/"} replace />;
 }
 
 export default function App() {
@@ -46,6 +51,8 @@ export default function App() {
                         <Route path="/" element={<Home />} />
                         <Route path="/blog" element={<BlogList />} />
                         <Route path="/blog/:slug" element={<BlogDetail />} />
+                        <Route path="/portfolio/*" element={<PortfolioRedirect />} />
+                        <Route path="/admin" element={<Navigate to="/admin/dashboard" replace />} />
                         <Route path="/admin/login" element={<AdminLogin />} />
                         <Route
                             path="/admin/dashboard"

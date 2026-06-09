@@ -27,6 +27,9 @@ REFRESH_TOKEN_DAYS = 7
 MAX_LOGIN_ATTEMPTS = 5
 LOCKOUT_MINUTES = 15
 
+# Use secure cookies if not explicitly in development mode
+SECURE_COOKIES = os.environ.get("ENVIRONMENT", "production").lower() != "development"
+
 mongo_url = os.environ['MONGO_URL']
 client = AsyncIOMotorClient(mongo_url)
 db = client[os.environ['DB_NAME']]
@@ -75,9 +78,9 @@ def create_refresh_token(user_id: str) -> str:
 
 
 def set_auth_cookies(response: Response, access: str, refresh: str):
-    response.set_cookie("access_token", access, httponly=True, secure=False, samesite="lax",
+    response.set_cookie("access_token", access, httponly=True, secure=SECURE_COOKIES, samesite="lax",
                         max_age=ACCESS_TOKEN_MINUTES * 60, path="/")
-    response.set_cookie("refresh_token", refresh, httponly=True, secure=False, samesite="lax",
+    response.set_cookie("refresh_token", refresh, httponly=True, secure=SECURE_COOKIES, samesite="lax",
                         max_age=REFRESH_TOKEN_DAYS * 86400, path="/")
 
 
@@ -422,7 +425,7 @@ async def refresh_token(request: Request, response: Response):
         if not user:
             raise HTTPException(status_code=401, detail="User not found")
         access = create_access_token(user["id"], user["email"])
-        response.set_cookie("access_token", access, httponly=True, secure=False, samesite="lax",
+        response.set_cookie("access_token", access, httponly=True, secure=SECURE_COOKIES, samesite="lax",
                             max_age=ACCESS_TOKEN_MINUTES * 60, path="/")
         return {"access_token": access}
     except jwt.ExpiredSignatureError:

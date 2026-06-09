@@ -43,15 +43,18 @@ logger = logging.getLogger(__name__)
 
 # -------------------- Helpers --------------------
 def get_jwt_secret() -> str:
+    """Docstring for get_jwt_secret."""
     return os.environ["JWT_SECRET"]
 
 
 def hash_password(password: str) -> str:
+    """Docstring for hash_password."""
     salt = bcrypt.gensalt()
     return bcrypt.hashpw(password.encode("utf-8"), salt).decode("utf-8")
 
 
 def verify_password(plain: str, hashed: str) -> bool:
+    """Docstring for verify_password."""
     try:
         return bcrypt.checkpw(plain.encode("utf-8"), hashed.encode("utf-8"))
     except Exception:
@@ -59,6 +62,7 @@ def verify_password(plain: str, hashed: str) -> bool:
 
 
 def create_access_token(user_id: str, email: str) -> str:
+    """Docstring for create_access_token."""
     payload = {
         "sub": user_id,
         "email": email,
@@ -69,6 +73,7 @@ def create_access_token(user_id: str, email: str) -> str:
 
 
 def create_refresh_token(user_id: str) -> str:
+    """Docstring for create_refresh_token."""
     payload = {
         "sub": user_id,
         "exp": datetime.now(timezone.utc) + timedelta(days=REFRESH_TOKEN_DAYS),
@@ -78,6 +83,7 @@ def create_refresh_token(user_id: str) -> str:
 
 
 def set_auth_cookies(response: Response, access: str, refresh: str):
+    """Docstring for set_auth_cookies."""
     response.set_cookie("access_token", access, httponly=True, secure=SECURE_COOKIES, samesite="lax",
                         max_age=ACCESS_TOKEN_MINUTES * 60, path="/")
     response.set_cookie("refresh_token", refresh, httponly=True, secure=SECURE_COOKIES, samesite="lax",
@@ -85,6 +91,7 @@ def set_auth_cookies(response: Response, access: str, refresh: str):
 
 
 def slugify(text: str) -> str:
+    """Docstring for slugify."""
     text = text.lower().strip()
     text = re.sub(r'[^\w\s-]', '', text)
     text = re.sub(r'[\s_-]+', '-', text)
@@ -92,6 +99,7 @@ def slugify(text: str) -> str:
 
 
 async def get_current_user(request: Request) -> dict:
+    """Docstring for get_current_user."""
     token = request.cookies.get("access_token")
     if not token:
         auth_header = request.headers.get("Authorization", "")
@@ -314,6 +322,7 @@ PORTFOLIO_DATA = {
 # -------------------- Routes: Health --------------------
 @api_router.get("/")
 async def root():
+    """Docstring for root."""
     return {"message": "Anshul Bisht Portfolio API", "status": "ok"}
 
 
@@ -325,6 +334,7 @@ PORTFOLIO_SECTIONS = {
 
 
 async def get_portfolio_doc():
+    """Docstring for get_portfolio_doc."""
     doc = await db.portfolio_content.find_one(
         {"key": "main"}, {"_id": 0, "key": 0}
     )
@@ -335,11 +345,13 @@ async def get_portfolio_doc():
 
 @api_router.get("/portfolio")
 async def get_portfolio():
+    """Docstring for get_portfolio."""
     return await get_portfolio_doc()
 
 
 @api_router.get("/admin/portfolio")
 async def admin_get_portfolio(user: dict = Depends(get_current_user)):
+    """Docstring for admin_get_portfolio."""
     return await get_portfolio_doc()
 
 
@@ -349,6 +361,7 @@ async def admin_update_portfolio_section(
     payload: dict,
     user: dict = Depends(get_current_user),
 ):
+    """Docstring for admin_update_portfolio_section."""
     if section not in PORTFOLIO_SECTIONS:
         raise HTTPException(status_code=400, detail="Invalid section")
     if "data" not in payload:
@@ -365,6 +378,7 @@ async def admin_update_portfolio_section(
 # -------------------- Routes: Auth --------------------
 @api_router.post("/auth/login")
 async def login(payload: LoginRequest, request: Request, response: Response):
+    """Docstring for login."""
     email = payload.email.lower().strip()
     ip = request.client.host if request.client else "unknown"
     identifier = f"{ip}:{email}"
@@ -402,6 +416,7 @@ async def login(payload: LoginRequest, request: Request, response: Response):
 
 @api_router.post("/auth/logout")
 async def logout(response: Response):
+    """Docstring for logout."""
     response.delete_cookie("access_token", path="/")
     response.delete_cookie("refresh_token", path="/")
     return {"ok": True}
@@ -409,11 +424,13 @@ async def logout(response: Response):
 
 @api_router.get("/auth/me")
 async def auth_me(user: dict = Depends(get_current_user)):
+    """Docstring for auth_me."""
     return user
 
 
 @api_router.post("/auth/refresh")
 async def refresh_token(request: Request, response: Response):
+    """Docstring for refresh_token."""
     token = request.cookies.get("refresh_token")
     if not token:
         raise HTTPException(status_code=401, detail="No refresh token")
@@ -437,6 +454,7 @@ async def refresh_token(request: Request, response: Response):
 # -------------------- Routes: Contact --------------------
 @api_router.post("/contact")
 async def submit_contact(payload: ContactSubmissionCreate):
+    """Docstring for submit_contact."""
     doc = {
         "id": str(uuid.uuid4()),
         "name": payload.name.strip(),
@@ -454,12 +472,14 @@ async def submit_contact(payload: ContactSubmissionCreate):
 
 @api_router.get("/admin/contacts")
 async def list_contacts(user: dict = Depends(get_current_user)):
+    """Docstring for list_contacts."""
     items = await db.contact_submissions.find({}, {"_id": 0}).sort("created_at", -1).to_list(1000)
     return items
 
 
 @api_router.patch("/admin/contacts/{contact_id}/read")
 async def mark_contact_read(contact_id: str, user: dict = Depends(get_current_user)):
+    """Docstring for mark_contact_read."""
     result = await db.contact_submissions.update_one({"id": contact_id}, {"$set": {"read": True}})
     if result.matched_count == 0:
         raise HTTPException(status_code=404, detail="Contact not found")
@@ -468,6 +488,7 @@ async def mark_contact_read(contact_id: str, user: dict = Depends(get_current_us
 
 @api_router.delete("/admin/contacts/{contact_id}")
 async def delete_contact(contact_id: str, user: dict = Depends(get_current_user)):
+    """Docstring for delete_contact."""
     result = await db.contact_submissions.delete_one({"id": contact_id})
     if result.deleted_count == 0:
         raise HTTPException(status_code=404, detail="Contact not found")
@@ -477,6 +498,7 @@ async def delete_contact(contact_id: str, user: dict = Depends(get_current_user)
 # -------------------- Routes: Blog --------------------
 @api_router.get("/blog")
 async def list_blog(published_only: bool = True):
+    """Docstring for list_blog."""
     query = {"published": True} if published_only else {}
     items = await db.blog_posts.find(query, {"_id": 0}).sort("created_at", -1).to_list(500)
     return items
@@ -484,6 +506,7 @@ async def list_blog(published_only: bool = True):
 
 @api_router.get("/blog/{slug}")
 async def get_blog(slug: str):
+    """Docstring for get_blog."""
     item = await db.blog_posts.find_one({"slug": slug, "published": True}, {"_id": 0})
     if not item:
         raise HTTPException(status_code=404, detail="Post not found")
@@ -492,12 +515,14 @@ async def get_blog(slug: str):
 
 @api_router.get("/admin/blog")
 async def list_admin_blog(user: dict = Depends(get_current_user)):
+    """Docstring for list_admin_blog."""
     items = await db.blog_posts.find({}, {"_id": 0}).sort("created_at", -1).to_list(500)
     return items
 
 
 @api_router.post("/admin/blog")
 async def create_blog(payload: BlogPostCreate, user: dict = Depends(get_current_user)):
+    """Docstring for create_blog."""
     now_iso = datetime.now(timezone.utc).isoformat()
     base_slug = slugify(payload.title) or str(uuid.uuid4())[:8]
     slug = base_slug
@@ -524,6 +549,7 @@ async def create_blog(payload: BlogPostCreate, user: dict = Depends(get_current_
 
 @api_router.put("/admin/blog/{post_id}")
 async def update_blog(post_id: str, payload: BlogPostUpdate, user: dict = Depends(get_current_user)):
+    """Docstring for update_blog."""
     existing = await db.blog_posts.find_one({"id": post_id}, {"_id": 0})
     if not existing:
         raise HTTPException(status_code=404, detail="Post not found")
@@ -544,6 +570,7 @@ async def update_blog(post_id: str, payload: BlogPostUpdate, user: dict = Depend
 
 @api_router.delete("/admin/blog/{post_id}")
 async def delete_blog(post_id: str, user: dict = Depends(get_current_user)):
+    """Docstring for delete_blog."""
     result = await db.blog_posts.delete_one({"id": post_id})
     if result.deleted_count == 0:
         raise HTTPException(status_code=404, detail="Post not found")
@@ -564,6 +591,7 @@ app.add_middleware(
 
 # -------------------- Startup --------------------
 async def seed_admin():
+    """Docstring for seed_admin."""
     admin_email_env = os.environ.get("ADMIN_EMAIL")
     admin_password_env = os.environ.get("ADMIN_PASSWORD")
 
@@ -590,6 +618,7 @@ async def seed_admin():
 
 
 async def seed_demo_blog_posts():
+    """Docstring for seed_demo_blog_posts."""
     count = await db.blog_posts.count_documents({})
     if count > 0:
         return
@@ -637,6 +666,7 @@ async def seed_demo_blog_posts():
 
 
 async def seed_portfolio_content():
+    """Docstring for seed_portfolio_content."""
     existing = await db.portfolio_content.find_one({"key": "main"})
     if existing is None:
         doc = {"key": "main", **PORTFOLIO_DATA}
@@ -646,6 +676,7 @@ async def seed_portfolio_content():
 
 @app.on_event("startup")
 async def on_startup():
+    """Docstring for on_startup."""
     # Indexes
     await db.users.create_index("email", unique=True)
     await db.login_attempts.create_index("identifier", unique=True)
@@ -659,4 +690,5 @@ async def on_startup():
 
 @app.on_event("shutdown")
 async def on_shutdown():
+    """Docstring for on_shutdown."""
     client.close()

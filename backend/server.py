@@ -561,8 +561,14 @@ app.add_middleware(
 
 # -------------------- Startup --------------------
 async def seed_admin():
-    admin_email = os.environ.get("ADMIN_EMAIL", "admin@example.com").lower().strip()
-    admin_password = os.environ.get("ADMIN_PASSWORD", "admin123")
+    admin_email_env = os.environ.get("ADMIN_EMAIL")
+    admin_password_env = os.environ.get("ADMIN_PASSWORD")
+
+    if not admin_email_env or not admin_password_env:
+        raise ValueError("ADMIN_EMAIL and ADMIN_PASSWORD environment variables must be set.")
+
+    admin_email = admin_email_env.lower().strip()
+    admin_password = admin_password_env
     existing = await db.users.find_one({"email": admin_email})
     if existing is None:
         doc = {

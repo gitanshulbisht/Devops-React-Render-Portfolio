@@ -81,13 +81,10 @@ class TestAuth:
         assert "refresh_token" in cookie_names
 
         # Verify secure flag
-        from server import SECURE_COOKIES
+        expected_secure = os.environ.get("EXPECTED_SECURE_COOKIES", "false").lower() == "true"
         for c in r.cookies:
-            if c.name in ["access_token", "refresh_token"]:
-                if SECURE_COOKIES:
-                    assert c.secure is True
-                else:
-                    assert c.secure is False
+            if c.name in {"access_token", "refresh_token"}:
+                assert c.secure is expected_secure
 
     def test_login_wrong_password(self, api_client):
         r = api_client.post(f"{API}/auth/login", json={"email": ADMIN_EMAIL, "password": "wrongpass!"})
